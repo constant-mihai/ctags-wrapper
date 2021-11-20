@@ -13,7 +13,11 @@ local_tags_log="log_tags"
 tmp_tags="$HOME/tags/tmp_tags.$$";
 name=tags
 
-echo "Generating tags for $language:"
+if [ -d "$local_tags_dir" ]; then
+    mkdir -p $local_tags_dir
+fi
+
+echo "Generating tags for language: $language."
 case $language in
     python)
         ctags -R --fields=+l --languages=python --python-kinds=-iv -f ./tags-py .
@@ -22,6 +26,7 @@ case $language in
     c)
         echo $ctags_flags
         ctags $ctags_flags -o $tmp_tags --append -R /usr/include/;
+        ctags $ctags_flags -o $tmp_tags --append -R /usr/local/include/;
         #ctags $ctags_flags -o $tmp_tags --append -R -h +.. /usr/include/c++/; ## TODO can't get it to load C++ headers
         ctags $ctags_flags -o $tmp_tags --append -R -h default $path;
         mv $tmp_tags $current_dir/$name;
